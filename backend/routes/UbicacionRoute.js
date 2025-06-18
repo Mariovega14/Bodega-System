@@ -1,9 +1,10 @@
+// routes/UbicacionRoute.js
 import express from "express";
 import Ubicacion from "../models/UbicacionModel.js";
 
 const router = express.Router();
 
-// 🔹 Obtener todas las ubicaciones (solo estructura física)
+// GET /api/ubicaciones
 router.get("/", async (req, res) => {
   try {
     const ubicaciones = await Ubicacion.find();
@@ -22,25 +23,46 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 🔹 Crear nueva ubicación
+// POST /api/ubicaciones
 router.post("/", async (req, res) => {
   try {
-    const nuevaUbicacion = new Ubicacion(req.body);
+    const { coordenada, tipo, pasillo, posicion, nivel, capacidad } = req.body;
+
+    if (!coordenada || !tipo || !pasillo || !posicion || nivel === undefined || capacidad === undefined) {
+      return res.status(400).json({ error: "Faltan campos requeridos." });
+    }
+
+    const nuevaUbicacion = new Ubicacion({
+      coordenada,
+      tipo,
+      pasillo,
+      posicion,
+      nivel,
+      capacidad,
+      estado: "0",
+      sku: null,
+      fechaMovimiento: null,
+      fechaVencimiento: null,
+    });
+
     await nuevaUbicacion.save();
-    res.status(201).json(nuevaUbicacion);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+
+    res.status(201).json({
+      mensaje: "Ubicación creada exitosamente",
+      ubicacion: nuevaUbicacion,
+    });
+  } catch (error) {
+    if (error.code === 11000 && error.keyPattern?.coordenada) {
+      res.status(400).json({
+        error: "Ya existe una ubicación con esa coordenada.",
+      });
+    } else {
+      res.status(500).json({
+        error: "Error al crear la ubicación.",
+        detalle: error.message,
+      });
+    }
   }
 });
 
 export default router;
-
-// 🟩 Obtener ubicaciones vacías (estado = 0)
-router.get("/vacias", async (req, res) => {
-  try {
-    const vacias = await Ubicacion.find({ estado: 0 });
-    res.json(vacias);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener ubicaciones vacías", detalle: error.message });
-  }
-});
