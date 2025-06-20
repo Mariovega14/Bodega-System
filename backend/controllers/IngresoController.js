@@ -38,7 +38,8 @@ export const ingresarProductos = async (req, res) => {
 
       // 4. Asignar producto
       ubicacionDisponible.sku = sku;
-      ubicacionDisponible.fechaVencimiento = fechaVencimiento;
+      // Convierte la fecha a tipo Date si viene como string
+      ubicacionDisponible.fechaVencimiento = fechaVencimiento ? new Date(fechaVencimiento) : null;
       ubicacionDisponible.cantidad = cantidad;
       ubicacionDisponible.estado = "Ocupado";
 

@@ -1,13 +1,24 @@
-function HomePage() {
-  const rolUsuario = "admin"; // o trabajador
+import React from "react";
+import EstadoBodegaChart from "../components/EstadoBodegaChart";
+import StockPorProducto from "../components/StockPorProducto";
+import ProductosPorVencer from "../components/ProductosPorVencer";
 
+function HomePage() {
   return (
-    <div className="p-8 text-center">
-      <h1 className="text-4xl font-bold mb-4">SISTEMA DE BODEGA</h1>
-       <h1 className="text-4xl font-bold mb-4">BIENVENIDXSss</h1>
-      <p className="text-xl text-gray-700">
-        Bienvenido, <span className="font-semibold">{rolUsuario.toUpperCase()}</span>
-      </p>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-6">Panel Principal de la Bodega</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Gráfico Estado General */}
+        <EstadoBodegaChart />
+      </div>
+
+      {/* Sección adicional: stock por producto */}
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold mb-4">Stock por Producto</h2>
+        <StockPorProducto />
+        <ProductosPorVencer />
+      </div>
     </div>
   );
 }
