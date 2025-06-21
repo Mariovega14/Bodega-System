@@ -23,27 +23,36 @@ function SalidasPage() {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Salidas de Producto</h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-extrabold text-red-700 mb-6 tracking-wide">
+        🚚 Salidas de Producto
+      </h1>
 
-      <form onSubmit={manejarBusqueda} className="space-y-4 mb-6">
+      <form
+        onSubmit={manejarBusqueda}
+        className="bg-white p-6 rounded shadow-md border border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+      >
         <div>
-          <label className="block text-sm font-medium">SKU:</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            SKU:
+          </label>
           <input
             type="text"
             value={sku}
             onChange={(e) => setSku(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Tipo de FEFO:</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Tipo de FEFO:
+          </label>
           <select
             value={tipoFEFO}
             onChange={(e) => setTipoFEFO(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
           >
             <option value="primero">Primero en expirar</option>
             <option value="intermedio">Intermedio</option>
@@ -52,52 +61,68 @@ function SalidasPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Cantidad a retirar:</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Cantidad:
+          </label>
           <input
             type="number"
             min="1"
             value={cantidad}
             onChange={(e) => setCantidad(parseInt(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
             required
           />
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Buscar salidas
-        </button>
+        <div className="md:col-span-3 flex justify-end pt-2">
+          <button
+            type="submit"
+            className="bg-red-700 hover:bg-red-800 text-white font-semibold px-6 py-2 rounded shadow"
+          >
+            🔍 Buscar salidas
+          </button>
+        </div>
       </form>
 
-      {error && <p className="text-red-500">{error}</p>}
+      {error && (
+        <p className="text-red-600 font-medium text-sm text-center mb-4">
+          ❌ {error}
+        </p>
+      )}
 
       {resultados.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold mb-2">
-            Resultados para: {producto} ({sku})
+        <div className="bg-white p-6 rounded shadow-md border border-gray-200">
+          <h2 className="text-lg font-bold text-gray-700 mb-4">
+            Resultados para: <span className="text-red-700">{producto}</span> (
+            {sku})
           </h2>
-          <table className="w-full border border-gray-300 mt-2">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-3 py-1">Coordenada</th>
-                <th className="border px-3 py-1">Fecha de Vencimiento</th>
-                <th className="border px-3 py-1">Cantidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              {resultados.map((item, idx) => (
-                <tr key={idx}>
-                  <td className="border px-3 py-1">{item.coordenada}</td>
-                  <td className="border px-3 py-1">
-                    {new Date(item.fechaVencimiento).toLocaleDateString()}
-                  </td>
-                  <td className="border px-3 py-1">{item.cantidad}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-gray-800 border border-gray-300">
+              <thead className="bg-black text-white uppercase tracking-wider text-xs">
+                <tr>
+                  <th className="px-4 py-2 text-left">Coordenada</th>
+                  <th className="px-4 py-2 text-left">Fecha de Vencimiento</th>
+                  <th className="px-4 py-2 text-left">Cantidad</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {resultados.map((item, idx) => (
+                  <tr
+                    key={idx}
+                    className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                  >
+                    <td className="px-4 py-2">{item.coordenada}</td>
+                    <td className="px-4 py-2">
+                      {new Date(item.fechaVencimiento).toLocaleDateString(
+                        "es-CL"
+                      )}
+                    </td>
+                    <td className="px-4 py-2">{item.cantidad}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

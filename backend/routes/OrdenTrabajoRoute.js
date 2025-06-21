@@ -1,6 +1,4 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 
 const router = express.Router();
@@ -18,30 +16,30 @@ router.post("/generar", async (req, res) => {
   const now = new Date();
   const fechaFormato = now.toLocaleString("es-CL", {
     timeZone: "America/Santiago",
-    hour12: false
+    hour12: false,
   });
 
   const nombreArchivo = `ODT_${now.toISOString().replace(/[:.]/g, "-")}.docx`;
 
-  // ✅ Crear documento vacío
-  const doc = new Document();
+  // ✅ Crear documento con metadatos
 
-  // ✅ Armar contenido en una única sección
   const seccionContenido = [
     new Paragraph({
       children: [
         new TextRun({
           text: "ORDEN DE TRABAJO - Ingreso de Productos",
           bold: true,
-          size: 28
-        })
-      ]
+          size: 28,
+        }),
+      ],
     }),
     new Paragraph(""),
     new Paragraph({
-      children: [new TextRun({ text: `Fecha de generación: ${fechaFormato}`, size: 22 })]
+      children: [
+        new TextRun({ text: `Fecha de generación: ${fechaFormato}`, size: 22 }),
+      ],
     }),
-    new Paragraph("")
+    new Paragraph(""),
   ];
 
   resultados
@@ -49,32 +47,41 @@ router.post("/generar", async (req, res) => {
     .forEach((r) => {
       seccionContenido.push(new Paragraph(`SKU: ${r.sku}`));
       seccionContenido.push(
-        new Paragraph(`Ubicación Asignada: ${r.mensaje.replace("Ingresado en ", "")}`)
+        new Paragraph(
+          `Ubicación Asignada: ${r.mensaje.replace("Ingresado en ", "")}`
+        )
       );
       seccionContenido.push(new Paragraph(""));
     });
 
-  doc.addSection({
-    properties: {},
-    children: seccionContenido
+  // Luego lo usamos para crear el documento
+  const doc = new Document({
+    creator: "Sistema de Bodega",
+    title: "Orden de Trabajo",
+    description: "Documento generado automáticamente",
+    sections: [
+      {
+        properties: {},
+        children: seccionContenido,
+      },
+    ],
   });
 
   try {
     const buffer = await Packer.toBuffer(doc);
-    const rutaArchivo = path.join("ordenes", nombreArchivo);
 
-    fs.mkdirSync("ordenes", { recursive: true });
-    fs.writeFileSync(rutaArchivo, buffer);
+    // ✅ Enviar como descarga sin escribir en disco
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${nombreArchivo}"`
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
+    res.send(buffer);
 
-    res.download(rutaArchivo, nombreArchivo, (err) => {
-      if (err) {
-        console.error("❌ Error al descargar archivo:", err);
-        res.status(500).send("Error al generar el documento");
-      } else {
-        fs.unlinkSync(rutaArchivo);
-        console.log("✅ Documento enviado y eliminado:", nombreArchivo);
-      }
-    });
+    console.log("✅ Documento generado correctamente");
   } catch (error) {
     console.error("❌ Error al generar el documento Word:", error);
     res.status(500).send("Error al generar el documento Word");

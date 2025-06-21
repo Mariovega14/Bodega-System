@@ -29,7 +29,7 @@ function ProductosPage() {
       .post("http://localhost:5000/api/productos/pasillo1", {
         productos: productosEnCola,
       })
-      .then((res) => {
+      .then(() => {
         setProductosEnCola([]);
         setModalOpen(false);
         return axios.get("http://localhost:5000/api/productos");
@@ -39,43 +39,47 @@ function ProductosPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">Lista de Productos</h2>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-extrabold text-red-700 tracking-wide">
+          📦 Productos
+        </h2>
         <button
           onClick={() => setModalOpen(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow-md"
         >
           + Crear Productos
         </button>
       </div>
 
-      <table className="min-w-full bg-white border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2">SKU</th>
-            <th className="border px-4 py-2">Nombre</th>
-            <th className="border px-4 py-2">Posición Sugerida</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productos.map((prod, i) => (
-            <tr key={i}>
-              <td className="border px-4 py-2">{prod.sku}</td>
-              <td className="border px-4 py-2">{prod.nombre}</td>
-              <td className="border px-4 py-2">
-                {prod.posicionSugerida || "-"}
-              </td>
+      <div className="overflow-x-auto rounded shadow-lg border border-gray-300 bg-white">
+        <table className="min-w-full text-sm text-gray-800">
+          <thead className="bg-black text-white uppercase tracking-wide text-xs">
+            <tr>
+              <th className="px-6 py-3 text-left">SKU</th>
+              <th className="px-6 py-3 text-left">Nombre</th>
+              <th className="px-6 py-3 text-left">Posición sugerida</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {productos.map((prod, i) => (
+              <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-100"}>
+                <td className="px-6 py-3">{prod.sku}</td>
+                <td className="px-6 py-3">{prod.nombre}</td>
+                <td className="px-6 py-3">{prod.posicionSugerida || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded w-full max-w-xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4">Agregar Productos</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-xl shadow-xl border border-gray-300">
+            <h3 className="text-2xl font-bold text-black mb-6">
+              ➕ Agregar nuevo producto
+            </h3>
             <div className="space-y-4">
               <input
                 type="text"
@@ -84,7 +88,7 @@ function ProductosPage() {
                 onChange={(e) =>
                   setNuevoProducto({ ...nuevoProducto, sku: e.target.value })
                 }
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-400 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
               />
               <input
                 type="text"
@@ -93,7 +97,7 @@ function ProductosPage() {
                 onChange={(e) =>
                   setNuevoProducto({ ...nuevoProducto, nombre: e.target.value })
                 }
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-400 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
               />
               <input
                 type="text"
@@ -105,17 +109,21 @@ function ProductosPage() {
                     posicionSugerida: e.target.value,
                   })
                 }
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-400 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
               />
+
               <button
                 onClick={agregarProductoALaCola}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded w-full"
               >
                 + Añadir a la lista
               </button>
+
               <div>
-                <h4 className="font-semibold mt-4">Productos en lista:</h4>
-                <ul className="list-disc list-inside">
+                <h4 className="text-sm font-semibold mb-1 text-gray-700">
+                  Productos en lista:
+                </h4>
+                <ul className="text-sm text-gray-800 list-disc list-inside">
                   {productosEnCola.map((p, index) => (
                     <li key={index}>
                       {p.sku} - {p.nombre} ({p.posicionSugerida || "-"})
@@ -123,16 +131,17 @@ function ProductosPage() {
                   ))}
                 </ul>
               </div>
-              <div className="flex justify-end space-x-2 mt-6">
+
+              <div className="flex justify-end gap-2 mt-4">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={enviarProductos}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded"
                 >
                   Crear Productos
                 </button>

@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import ProductosPage from "./pages/ProductosPage";
@@ -24,7 +29,7 @@ function App() {
 
   return (
     <Router>
-      {/* Selector de rol (solo visible en desarrollo) */}
+      {/* Selector de rol (solo visible en desarrollo)
       <div className="bg-gray-100 p-2 flex items-center justify-between">
         <div>
           <label className="mr-2 font-semibold">Rol actual:</label>
@@ -37,7 +42,7 @@ function App() {
             <option value="trabajador">Trabajador</option>
           </select>
         </div>
-      </div>
+      </div> */}
 
       <Navbar rol={rolUsuario} />
 
@@ -61,7 +66,10 @@ function App() {
         {rolUsuario === "admin" && (
           <>
             <Route path="/usuarios" element={<UsuariosPage />} />
-            <Route path="/ingreso-automatico" element={<IngresoAutomaticoPage />} />
+            <Route
+              path="/ingreso-automatico"
+              element={<IngresoAutomaticoPage />}
+            />
             <Route path="/ingresos" element={<IngresosPage />} />
             <Route path="/movimientos" element={<MovimientosPage />} />
           </>

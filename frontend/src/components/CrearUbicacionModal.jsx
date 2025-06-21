@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function CrearUbicacionModal({ onUbicacionCreada }) {
   const [show, setShow] = useState(false);
   const [form, setForm] = useState({
-    tipo: '',
-    pasillo: '',
-    posicion: '',
-    nivel: '',
+    tipo: "",
+    pasillo: "",
+    posicion: "",
+    nivel: "",
     capacidad: 1,
   });
-  const [mensaje, setMensaje] = useState('');
+  const [mensaje, setMensaje] = useState("");
 
   const generarCoordenada = () => {
     const { pasillo, posicion, nivel } = form;
-    return pasillo && posicion && nivel ? `${pasillo}-${posicion}-${nivel}` : '';
+    return pasillo && posicion && nivel
+      ? `${pasillo}-${posicion}-${nivel}`
+      : "";
   };
 
   const handleChange = (e) => {
@@ -22,8 +24,8 @@ function CrearUbicacionModal({ onUbicacionCreada }) {
   };
 
   const limpiarFormulario = () => {
-    setForm({ tipo: '', pasillo: '', posicion: '', nivel: '', capacidad: 1 });
-    setMensaje('');
+    setForm({ tipo: "", pasillo: "", posicion: "", nivel: "", capacidad: 1 });
+    setMensaje("");
   };
 
   const cerrarModal = () => {
@@ -32,9 +34,9 @@ function CrearUbicacionModal({ onUbicacionCreada }) {
   };
 
   const crearUbicacion = async () => {
-    setMensaje('');
+    setMensaje("");
     try {
-      await axios.post('http://localhost:5000/api/ubicaciones', {
+      await axios.post("http://localhost:5000/api/ubicaciones", {
         coordenada: generarCoordenada(),
         tipo: form.tipo,
         pasillo: form.pasillo,
@@ -43,11 +45,13 @@ function CrearUbicacionModal({ onUbicacionCreada }) {
         capacidad: parseInt(form.capacidad),
       });
 
-      setMensaje('✅ Ubicación creada con éxito');
+      setMensaje("✅ Ubicación creada con éxito");
       onUbicacionCreada();
       setTimeout(() => cerrarModal(), 1500);
     } catch (error) {
-      setMensaje(error.response?.data?.error || '❌ Error al crear la ubicación');
+      setMensaje(
+        error.response?.data?.error || "❌ Error al crear la ubicación"
+      );
     }
   };
 
@@ -58,46 +62,54 @@ function CrearUbicacionModal({ onUbicacionCreada }) {
 
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') cerrarModal();
+      if (e.key === "Escape") cerrarModal();
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
   return (
     <>
       <button
         onClick={() => setShow(true)}
-        className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
+        className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow"
       >
-        Crear nueva ubicación
+        ➕ Crear nueva ubicación
       </button>
 
       {show && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow w-full max-w-md relative">
-            <h3 className="text-lg font-bold mb-4">Crear Ubicación</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {['tipo', 'pasillo', 'posicion', 'nivel', 'capacidad'].map((campo) => (
-                <div key={campo}>
-                  <label className="text-sm capitalize">{campo}</label>
-                  <input
-                    name={campo}
-                    value={form[campo]}
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded text-sm"
-                  />
-                </div>
-              ))}
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-300">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md border border-gray-200">
+            <h3 className="text-2xl font-bold text-black mb-6 border-b pb-2">
+              🗂️ Nueva Ubicación
+            </h3>
+
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              {["tipo", "pasillo", "posicion", "nivel", "capacidad"].map(
+                (campo) => (
+                  <div key={campo}>
+                    <label className="block text-sm font-medium text-gray-700 capitalize mb-1">
+                      {campo}
+                    </label>
+                    <input
+                      name={campo}
+                      value={form[campo]}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
+                    />
+                  </div>
+                )
+              )}
             </div>
 
-            <p className="mt-3 text-sm text-gray-500">
-              Coordenada generada: <strong>{generarCoordenada()}</strong>
+            <p className="text-sm text-gray-600 mb-4">
+              Coordenada generada:{" "}
+              <strong className="text-black">{generarCoordenada()}</strong>
             </p>
 
             {mensaje && (
-              <div className="mt-3 text-sm font-medium text-center">
-                {mensaje.startsWith('✅') ? (
+              <div className="text-center text-sm font-medium mb-4">
+                {mensaje.startsWith("✅") ? (
                   <span className="text-green-600">{mensaje}</span>
                 ) : (
                   <span className="text-red-600">{mensaje}</span>
@@ -105,18 +117,20 @@ function CrearUbicacionModal({ onUbicacionCreada }) {
               </div>
             )}
 
-            <div className="mt-5 flex justify-end gap-2">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={cerrarModal}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
               >
                 Cancelar
               </button>
               <button
                 onClick={crearUbicacion}
                 disabled={!camposCompletos()}
-                className={`px-4 py-2 text-white rounded ${
-                  camposCompletos() ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
+                className={`px-4 py-2 text-white font-semibold rounded ${
+                  camposCompletos()
+                    ? "bg-red-700 hover:bg-red-800"
+                    : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
                 Guardar
