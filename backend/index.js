@@ -23,6 +23,8 @@ import IngresoAutomaticoRoute from "./routes/IngresoAutomaticoRoute.js";
 import LayoutRoute from "./routes/LayoutRoute.js";
 import OrdenTrabajoRoute from "./routes/OrdenTrabajoRoute.js";
 import salidaRoutes from "./routes/SalidaRoute.js";
+import DashboardRoute from "./routes/DashboardRoute.js";
+
 
 // Asignación de rutas
 app.use("/api/login", LoginRoute);
@@ -35,7 +37,7 @@ app.use("/api/movimientos", MovimientoRoute);
 app.use("/api/layout", LayoutRoute);
 app.use("/api/ordenes", OrdenTrabajoRoute);
 app.use("/api/salidas", salidaRoutes);
-
+app.use("/api/dashboard", DashboardRoute);
 // Rutas de prueba
 app.get("/api/test", (req, res) => {
   res.json({ mensaje: "Funciona!" });
