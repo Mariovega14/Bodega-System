@@ -26,11 +26,13 @@ router.get("/", async (req, res) => {
 // POST /api/ubicaciones
 router.post("/", async (req, res) => {
   try {
-    const { coordenada, tipo, pasillo, posicion, nivel, capacidad } = req.body;
+    const { tipo, pasillo, posicion, nivel, capacidad } = req.body;
 
-    if (!coordenada || !tipo || !pasillo || !posicion || nivel === undefined || capacidad === undefined) {
+    if (!tipo || !pasillo || !posicion || nivel === undefined || capacidad === undefined) {
       return res.status(400).json({ error: "Faltan campos requeridos." });
     }
+
+    const coordenada = `${pasillo}-${posicion}-${nivel}`;
 
     const nuevaUbicacion = new Ubicacion({
       coordenada,

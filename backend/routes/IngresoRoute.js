@@ -150,9 +150,6 @@ router.post("/lote", async (req, res) => {
   for (const producto of productos) {
     const { sku, fechaVencimiento, cantidad } = producto;
 
-    // Log para ver qué llega desde el frontend
-    console.log("Producto recibido:", producto);
-
     try {
       const productoCatalogo = await Producto.findOne({ sku });
       if (!productoCatalogo) {
@@ -174,7 +171,7 @@ router.post("/lote", async (req, res) => {
       let ubicacion = null;
 
       // Intentar en misma posición, niveles superiores
-      for (let nivel = nivelInicial + 1; nivel <= 4; nivel++) {
+      for (let nivel = nivelInicial; nivel <= 4; nivel++) {
         const coord = `${pasilloOriginal}-${posicionNum}-${nivel}`;
         const disponible = await Ubicacion.findOne({ coordenada: coord, sku: null });
         if (disponible) {
@@ -216,8 +213,6 @@ router.post("/lote", async (req, res) => {
         continue;
       }
 
-      // Log para ver el valor antes de guardar
-      console.log("Asignando a ubicación:", ubicacion.coordenada, "Fecha vencimiento:", fechaVencimiento);
 
       ubicacion.sku = sku;
       ubicacion.fechaVencimiento = fechaVencimiento && fechaVencimiento !== "" ? new Date(fechaVencimiento) : null;

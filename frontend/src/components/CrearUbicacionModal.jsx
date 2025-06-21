@@ -36,8 +36,7 @@ function CrearUbicacionModal({ onUbicacionCreada }) {
   const crearUbicacion = async () => {
     setMensaje("");
     try {
-      await axios.post("http://localhost:5000/api/ubicaciones", {
-        coordenada: generarCoordenada(),
+      await axios.post('http://localhost:5000/api/ubicaciones', {
         tipo: form.tipo,
         pasillo: form.pasillo,
         posicion: form.posicion,
@@ -127,11 +126,12 @@ function CrearUbicacionModal({ onUbicacionCreada }) {
               <button
                 onClick={crearUbicacion}
                 disabled={!camposCompletos()}
-                className={`px-4 py-2 text-white font-semibold rounded ${
-                  camposCompletos()
+
+                className={`px-4 py-2 text-white font-semibold rounded ${camposCompletos()
                     ? "bg-red-700 hover:bg-red-800"
                     : "bg-gray-400 cursor-not-allowed"
-                }`}
+                  }`}
+
               >
                 Guardar
               </button>
