@@ -30,17 +30,18 @@ function Navbar() {
   const enlacesAdmin = [
     { ruta: "/ingresos", texto: "Ingresos" },
     { ruta: "/salidas", texto: "Salidas" },
-    { ruta: "/layout", texto: "Layout" },
     { ruta: "/productos", texto: "Productos" },
     { ruta: "/movimientos", texto: "Movimientos" },
     { ruta: "/usuarios", texto: "Usuarios" },
     { ruta: "/ubicaciones", texto: "Ubicaciones" },
+    { ruta: "/layout", texto: "Layout" },
     // 🚫 Ya no agregamos "/registro" aquí
   ];
 
   const enlacesOperador = [
     { ruta: "/ingresos", texto: "Entradas" },
     { ruta: "/salidas", texto: "Salidas" },
+    { ruta: "/layout", texto: "Layout" },
   ];
 
   const enlaces = rol === "admin"

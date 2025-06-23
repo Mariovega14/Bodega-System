@@ -80,7 +80,7 @@ function AppInner() {
         <Route
           path="/layout"
           element={
-            <PrivateRoute roles={["admin"]}>
+            <PrivateRoute roles={["admin", "operador"]}>
               <LayoutPage />
             </PrivateRoute>
           }
