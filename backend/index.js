@@ -17,7 +17,7 @@ import ProductoRoute from "./routes/producto-routes.js"; // GET, otros
 import UbicacionRoute from "./routes/UbicacionRoute.js"; // ✅ NUEVO
 import IngresoRoute from "./routes/IngresoRoute.js";
 import MovimientoRoute from "./routes/MovimientoRoute.js";
-import UsuarioRoute from "./routes/UsuarioRoute.js";
+import UsuarioRoute from "./routes/authRoute.js";
 import LoginRoute from "./routes/LoginRoute.js";
 import IngresoAutomaticoRoute from "./routes/IngresoAutomaticoRoute.js";
 import LayoutRoute from "./routes/LayoutRoute.js";

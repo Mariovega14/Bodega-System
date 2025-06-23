@@ -39,7 +39,7 @@ function UbicacionesPage() {
 
       <div className="overflow-x-auto rounded shadow-lg">
         <table className="min-w-full bg-white text-sm text-left text-gray-700">
-          <thead className="bg-blue-600 text-white uppercase text-xs">
+          <thead className="bg-black text-white uppercase text-xs">
             <tr>
               <th className="px-6 py-3">Coordenada</th>
               <th className="px-6 py-3">Tipo</th>
