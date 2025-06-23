@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
       coordenada: posicionSugerida,
       estado: 0
     });
-console.log("Disponibles:", disponibles.map(u => u.coordenada));
+
     let coordenadaAsignada = null;
 
     if (disponible) {

@@ -33,6 +33,7 @@ router.post("/", async (req, res) => {
     ubicacion.sku = sku;
     ubicacion.cantidad = 1;
     ubicacion.estado = "lleno";
+    ubicacion.fechaMovimiento = new Date();
     await ubicacion.save();
 
     // Registrar movimiento
@@ -70,6 +71,7 @@ router.post("/salida", async (req, res) => {
     ubicacion.sku = null;
     ubicacion.cantidad = 0;
     ubicacion.estado = "vacío";
+    ubicacion.fechaMovimiento = new Date();
     await ubicacion.save();
 
     // Registrar movimiento
@@ -116,6 +118,7 @@ router.post("/automatico", verificarRol("admin", "operador"), async (req, res) =
     ubicacion.sku = sku;
     ubicacion.cantidad = 1;
     ubicacion.estado = "lleno";
+    ubicacion.fechaMovimiento = new Date();
     await ubicacion.save();
 
     // Registrar movimiento
@@ -216,7 +219,7 @@ router.post("/lote", async (req, res) => {
 
       ubicacion.sku = sku;
       ubicacion.fechaVencimiento = fechaVencimiento && fechaVencimiento !== "" ? new Date(fechaVencimiento) : null;
-      ubicacion.fechaUltimoMov = new Date();
+      ubicacion.fechaMovimiento = new Date();
       ubicacion.cantidad = cantidad || 1;
       ubicacion.estado = "1";
       await ubicacion.save();

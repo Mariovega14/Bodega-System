@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CrearUbicacionModal from "../components/CrearUbicacionModal";
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import CrearUbicacionModal from '../components/CrearUbicacionModal';
 
 function UbicacionesPage() {
   const [ubicaciones, setUbicaciones] = useState([]);

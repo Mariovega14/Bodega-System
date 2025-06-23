@@ -42,6 +42,7 @@ export const ingresarProductos = async (req, res) => {
       ubicacionDisponible.fechaVencimiento = fechaVencimiento ? new Date(fechaVencimiento) : null;
       ubicacionDisponible.cantidad = cantidad;
       ubicacionDisponible.estado = "Ocupado";
+      ubicacionDisponible.fechaMovimiento = new Date();
 
       await ubicacionDisponible.save();
 

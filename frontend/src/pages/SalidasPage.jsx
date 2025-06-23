@@ -1,24 +1,32 @@
 import { useState } from "react";
-import { obtenerSalidasPorSKU } from "../services/salidasService";
+import { confirmarSalidaPorSKU } from "../services/salidasService";
 
 function SalidasPage() {
   const [sku, setSku] = useState("");
   const [tipoFEFO, setTipoFEFO] = useState("primero");
-  const [cantidad, setCantidad] = useState(1);
   const [resultados, setResultados] = useState([]);
-  const [producto, setProducto] = useState("");
   const [error, setError] = useState("");
 
-  const manejarBusqueda = async (e) => {
+  const manejarSalida = async (e) => {
     e.preventDefault();
     setError("");
     setResultados([]);
+
+    const confirmado = window.confirm("¿Estás seguro de realizar esta salida?");
+    if (!confirmado) return;
+
     try {
-      const data = await obtenerSalidasPorSKU(sku, tipoFEFO, cantidad);
-      setResultados(data.salidas);
-      setProducto(data.producto);
+      const data = await confirmarSalidaPorSKU(sku, tipoFEFO);
+      setResultados([
+        {
+          coordenada: data.coordenada,
+          fechaVencimiento: data.fechaVencimiento,
+          cantidadRetirada: 1,
+        },
+      ]);
+      setSku("");
     } catch (err) {
-      setError(err);
+      setError(err.response?.data?.error || "Error inesperado");
     }
   };
 
@@ -29,13 +37,11 @@ function SalidasPage() {
       </h1>
 
       <form
-        onSubmit={manejarBusqueda}
+        onSubmit={manejarSalida}
         className="bg-white p-6 rounded shadow-md border border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
       >
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            SKU:
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">SKU:</label>
           <input
             type="text"
             value={sku}
@@ -46,9 +52,7 @@ function SalidasPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Tipo de FEFO:
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tipo FEFO:</label>
           <select
             value={tipoFEFO}
             onChange={(e) => setTipoFEFO(e.target.value)}
@@ -60,26 +64,12 @@ function SalidasPage() {
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Cantidad:
-          </label>
-          <input
-            type="number"
-            min="1"
-            value={cantidad}
-            onChange={(e) => setCantidad(parseInt(e.target.value))}
-            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
-            required
-          />
-        </div>
-
         <div className="md:col-span-3 flex justify-end pt-2">
           <button
             type="submit"
             className="bg-red-700 hover:bg-red-800 text-white font-semibold px-6 py-2 rounded shadow"
           >
-            🔍 Buscar salidas
+            ✅ Confirmar salida
           </button>
         </div>
       </form>
@@ -93,36 +83,30 @@ function SalidasPage() {
       {resultados.length > 0 && (
         <div className="bg-white p-6 rounded shadow-md border border-gray-200">
           <h2 className="text-lg font-bold text-gray-700 mb-4">
-            Resultados para: <span className="text-red-700">{producto}</span> (
-            {sku})
+            Salida realizada exitosamente
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-gray-800 border border-gray-300">
-              <thead className="bg-black text-white uppercase tracking-wider text-xs">
-                <tr>
-                  <th className="px-4 py-2 text-left">Coordenada</th>
-                  <th className="px-4 py-2 text-left">Fecha de Vencimiento</th>
-                  <th className="px-4 py-2 text-left">Cantidad</th>
+          <table className="w-full text-sm text-gray-800 border border-gray-300">
+            <thead className="bg-black text-white uppercase tracking-wider text-xs">
+              <tr>
+                <th className="px-4 py-2 text-left">Coordenada</th>
+                <th className="px-4 py-2 text-left">Vencimiento</th>
+                <th className="px-4 py-2 text-left">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {resultados.map((item, idx) => (
+                <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <td className="px-4 py-2">{item.coordenada}</td>
+                  <td className="px-4 py-2">
+                    {item.fechaVencimiento
+                      ? new Date(item.fechaVencimiento).toLocaleDateString("es-CL")
+                      : "N/A"}
+                  </td>
+                  <td className="px-4 py-2">{item.cantidadRetirada}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {resultados.map((item, idx) => (
-                  <tr
-                    key={idx}
-                    className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                  >
-                    <td className="px-4 py-2">{item.coordenada}</td>
-                    <td className="px-4 py-2">
-                      {new Date(item.fechaVencimiento).toLocaleDateString(
-                        "es-CL"
-                      )}
-                    </td>
-                    <td className="px-4 py-2">{item.cantidad}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
