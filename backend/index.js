@@ -24,6 +24,7 @@ import LayoutRoute from "./routes/LayoutRoute.js";
 import OrdenTrabajoRoute from "./routes/OrdenTrabajoRoute.js";
 import salidaRoutes from "./routes/SalidaRoute.js";
 import DashboardRoute from "./routes/DashboardRoute.js";
+import OrdenSalidaRoute from "./routes/OrdenSalidaRoute.js";
 
 
 // Asignación de rutas
@@ -38,6 +39,7 @@ app.use("/api/layout", LayoutRoute);
 app.use("/api/ordenes", OrdenTrabajoRoute);
 app.use("/api/salidas", salidaRoutes);
 app.use("/api/dashboard", DashboardRoute);
+app.use("/api/ordenes", OrdenSalidaRoute);
 // Rutas de prueba
 app.get("/api/test", (req, res) => {
   res.json({ mensaje: "Funciona!" });

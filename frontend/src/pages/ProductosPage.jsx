@@ -10,6 +10,7 @@ function ProductosPage() {
     posicionSugerida: "",
   });
   const [productosEnCola, setProductosEnCola] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
 
   useEffect(() => {
     axios
@@ -38,12 +39,23 @@ function ProductosPage() {
       .catch((err) => console.error("Error al crear productos:", err));
   };
 
+  const productosFiltrados = productos.filter((prod) =>
+    `${prod.sku} ${prod.nombre}`.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-extrabold text-red-700 tracking-wide">
           📦 Productos
         </h2>
+        <input
+          type="text"
+          placeholder="🔍 Buscar por SKU o nombre..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          className="ml-4 border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-600 w-72"
+        />
         <button
           onClick={() => setModalOpen(true)}
           className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow-md"
@@ -62,7 +74,7 @@ function ProductosPage() {
             </tr>
           </thead>
           <tbody>
-            {productos.map((prod, i) => (
+            {productosFiltrados.map((prod, i) => (
               <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-100"}>
                 <td className="px-6 py-3">{prod.sku}</td>
                 <td className="px-6 py-3">{prod.nombre}</td>
