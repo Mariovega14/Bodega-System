@@ -6,88 +6,6 @@ import { verificarRol } from "../middlewares/verificarRol.js";
 
 const router = express.Router();
 
-// 🔹 Registrar ingreso de producto a una ubicación
-router.post("/", async (req, res) => {
-  const { sku, coordenada } = req.body;
-
-  try {
-    const producto = await Producto.findOne({ sku });
-    if (!producto) {
-      return res.status(404).json({ error: "Producto no encontrado" });
-    }
-
-    const ubicacion = await Ubicacion.findOne({ coordenada });
-    if (!ubicacion) {
-      return res.status(404).json({ error: "Ubicación no encontrada" });
-    }
-
-    if (ubicacion.sku && ubicacion.sku !== sku) {
-      return res.status(400).json({ error: "Ubicación ocupada por otro producto" });
-    }
-
-    if (ubicacion.cantidad === 1) {
-      return res.status(400).json({ error: "Ubicación ya está llena" });
-    }
-
-    // Actualizar ubicación
-    ubicacion.sku = sku;
-    ubicacion.cantidad = 1;
-    ubicacion.estado = "lleno";
-    ubicacion.fechaMovimiento = new Date();
-    await ubicacion.save();
-
-    // Registrar movimiento
-    await Movimiento.create({
-      sku,
-      coordenada,
-      tipo: "Ingreso"
-    });
-
-    res.status(200).json({ mensaje: "Ingreso registrado correctamente", ubicacion });
-
-  } catch (error) {
-    res.status(500).json({ error: "Error al registrar el ingreso", detalle: error.message });
-  }
-});
-
-// 🔹 Retirar producto de una ubicación
-router.post("/salida", async (req, res) => {
-  const { coordenada } = req.body;
-
-  try {
-    const ubicacion = await Ubicacion.findOne({ coordenada });
-
-    if (!ubicacion) {
-      return res.status(404).json({ error: "Ubicación no encontrada" });
-    }
-
-    if (!ubicacion.sku || ubicacion.cantidad === 0) {
-      return res.status(400).json({ error: "La ubicación ya está vacía" });
-    }
-
-    const skuRetirado = ubicacion.sku;
-
-    // Vaciar la ubicación
-    ubicacion.sku = null;
-    ubicacion.cantidad = 0;
-    ubicacion.estado = "vacío";
-    ubicacion.fechaMovimiento = new Date();
-    await ubicacion.save();
-
-    // Registrar movimiento
-    await Movimiento.create({
-      sku: skuRetirado,
-      coordenada,
-      tipo: "Salida"
-    });
-
-    res.status(200).json({ mensaje: "Salida registrada correctamente", ubicacion });
-
-  } catch (error) {
-    res.status(500).json({ error: "Error al registrar la salida", detalle: error.message });
-  }
-});
-
 // 🔹 Ingreso automático protegido por rol
 router.post("/automatico", verificarRol("admin", "operador"), async (req, res) => {
   const { sku } = req.body;
@@ -243,5 +161,9 @@ router.post("/lote", async (req, res) => {
 
   return res.status(200).json({ resultados });
 });
+
+
+
+
 
 export default router;

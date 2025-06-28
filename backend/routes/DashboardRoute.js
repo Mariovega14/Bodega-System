@@ -105,4 +105,40 @@ router.get("/productos-por-vencer", async (req, res) => {
   }
 });
 
+router.get("/estado-pasillo/:pasillo", async (req, res) => {
+  const { pasillo } = req.params;
+
+  try {
+    const total = await Ubicacion.countDocuments({ pasillo: { $regex: `^${pasillo}$`, $options: "i" } });
+
+    const vacias = await Ubicacion.countDocuments({
+      pasillo: { $regex: `^${pasillo}$`, $options: "i" },
+      sku: { $in: [null, ""] }
+    });
+
+    const ocupadas = total - vacias;
+    const porcentaje = total > 0 ? Math.round((ocupadas / total) * 100) : 0;
+
+    res.json({
+      pasillo,
+      totalUbicaciones: total,
+      ubicacionesOcupadas: ocupadas,
+      ubicacionesVacias: vacias,
+      porcentajeOcupacion: porcentaje
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener estado del pasillo" });
+  }
+});
+
+router.get("/pasillos", async (req, res) => {
+  try {
+    const pasillos = await Ubicacion.distinct("pasillo");
+    const ordenados = pasillos.sort((a, b) => a.localeCompare(b));
+    res.json(ordenados);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener pasillos" });
+  }
+});
+
 export default router;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function ProductosPage() {
   const [productos, setProductos] = useState([]);
@@ -15,7 +16,10 @@ function ProductosPage() {
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/productos")
-      .then((res) => setProductos(res.data))
+      .then((res) => {
+        const activos = res.data.filter((p) => p.activo !== false); // Mostrar solo activos
+        setProductos(activos);
+      })
       .catch((err) => console.error("Error al obtener productos:", err));
   }, []);
 
@@ -35,8 +39,40 @@ function ProductosPage() {
         setModalOpen(false);
         return axios.get("http://localhost:5000/api/productos");
       })
-      .then((res) => setProductos(res.data))
+      .then((res) => {
+        const activos = res.data.filter((p) => p.activo !== false);
+        setProductos(activos);
+      })
       .catch((err) => console.error("Error al crear productos:", err));
+  };
+
+  const eliminarProducto = (sku) => {
+    Swal.fire({
+      title: `¿Eliminar SKU ${sku}?`,
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`http://localhost:5000/api/productos/${sku}`)
+          .then(() => {
+            return axios.get("http://localhost:5000/api/productos");
+          })
+          .then((res) => {
+            const activos = res.data.filter((p) => p.activo !== false);
+            setProductos(activos);
+            Swal.fire("Eliminado", "El producto ha sido eliminado", "success");
+          })
+          .catch(() => {
+            Swal.fire("Error", "No se pudo eliminar el producto", "error");
+          });
+      }
+    });
   };
 
   const productosFiltrados = productos.filter((prod) =>
@@ -71,6 +107,7 @@ function ProductosPage() {
               <th className="px-6 py-3 text-left">SKU</th>
               <th className="px-6 py-3 text-left">Nombre</th>
               <th className="px-6 py-3 text-left">Posición sugerida</th>
+              <th className="px-6 py-3 text-left">Acciones</th> {/* Nueva columna */}
             </tr>
           </thead>
           <tbody>
@@ -79,6 +116,14 @@ function ProductosPage() {
                 <td className="px-6 py-3">{prod.sku}</td>
                 <td className="px-6 py-3">{prod.nombre}</td>
                 <td className="px-6 py-3">{prod.posicionSugerida || "-"}</td>
+                <td className="px-6 py-3">
+                  <button
+                    onClick={() => eliminarProducto(prod.sku)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                  >
+                    🗑️ Eliminar
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

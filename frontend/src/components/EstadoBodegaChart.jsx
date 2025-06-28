@@ -3,24 +3,24 @@ import Chart from "react-apexcharts";
 import axios from "axios";
 
 function EstadoBodegaChartApex() {
-  const [series, setSeries] = useState([0, 0]); // [vacias, ocupadas]
+  const [series, setSeries] = useState([0, 0]);
   const [labels, setLabels] = useState(["Vacías", "Ocupadas"]);
   const [resumen, setResumen] = useState("");
+  const [chartKey, setChartKey] = useState(Date.now()); // fuerza rerender
 
-  useEffect(() => {
+  const fetchData = () => {
     axios
       .get("/api/dashboard/estado-general")
       .then((res) => {
         const { vacias, ocupadas, total } = res.data;
 
         if (total > 0) {
-          const porcentajeVacias = ((vacias / total) * 100).toFixed(1);
           const porcentajeOcupadas = ((ocupadas / total) * 100).toFixed(1);
-
           setSeries([parseInt(vacias), parseInt(ocupadas)]);
           setResumen(
             `💡 ${ocupadas} de ${total} ubicaciones están ocupadas (${porcentajeOcupadas}%)`
           );
+          setChartKey(Date.now()); // actualizar clave para rerender
         } else {
           setSeries([0, 0]);
           setResumen("💡 No hay datos disponibles de la bodega.");
@@ -29,13 +29,25 @@ function EstadoBodegaChartApex() {
       .catch((err) => {
         console.error("❌ Error al obtener estado-general:", err);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
+
+    const handleFocus = () => {
+      fetchData();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, []);
 
   const chartOptions = {
     chart: {
+      id: "main-donut",
       type: "donut",
     },
-    labels: labels,
+    labels,
     legend: {
       position: "bottom",
       formatter: function (seriesName, opts) {
@@ -47,40 +59,35 @@ function EstadoBodegaChartApex() {
     },
     dataLabels: {
       enabled: true,
-      formatter: function (val) {
-        return `${val.toFixed(1)}%`;
+      formatter: (val) => `${val.toFixed(1)}%`,
+      style: {
+        colors: ["#ffffff"],
+        fontSize: "14px",
+        fontWeight: "bold",
+        fontFamily: "inherit",
       },
     },
     tooltip: {
       y: {
-        formatter: function (val) {
-          return `${val} ubicaciones`;
-        },
+        formatter: (val) => `${val} ubicaciones`,
       },
     },
-    colors: ["#34D399", "#F87171"], // verde y rojo suaves
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: { width: 300 },
-          legend: { position: "bottom" },
-        },
-      },
-    ],
+    colors: ["#34D399", "#F87171"],
   };
 
   return (
     <div className="p-6 bg-white rounded-2xl shadow-md w-full max-w-xl mx-auto">
-      <p className="text-sm text-gray-600 mb-0">{resumen}</p>
-
-      <Chart
-        options={chartOptions}
-        series={series}
-        type="donut"
-        width="100%"
-        height={320}
-      />
+      <p className="text-sm text-gray-900 mb-4 font-medium">{resumen}</p>
+      <div className="text-gray-900">
+        <Chart
+          key={chartKey}
+          options={chartOptions}
+          series={series}
+          type="donut"
+          width="100%"
+          height={320}
+        />
+      </div>
     </div>
   );
 }

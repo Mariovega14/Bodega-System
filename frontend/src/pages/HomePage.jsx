@@ -2,6 +2,7 @@ import React from "react";
 import EstadoBodegaChart from "../components/EstadoBodegaChart";
 import StockPorProducto from "../components/StockPorProductoChart";
 import ProductosPorVencer from "../components/ProductosPorVencer";
+import OcupacionPorPasilloChart from "../components/OcupacionPorPasilloChart";
 
 function HomePage() {
   return (
@@ -12,19 +13,26 @@ function HomePage() {
 
       {/* Estado general */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-700 mb-4">🏪 Estado General</h2>
-        <div className="flex justify-center">
-          <div className="w-full max-w-3xl">
-            <EstadoBodegaChart />
+        <div className="flex flex-col md:flex-row justify-center gap-8">
+          {/* Estado General */}
+          <div className="w-full md:w-1/2 max-w-xl bg-white rounded-2xl shadow p-6 flex flex-col min-h-[460px]">
+            <h2 className="text-xl font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
+              🏪 <span>Estado General</span>
+            </h2>
+            <div className="flex-grow flex justify-center items-center">
+              <EstadoBodegaChart />
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* Stock por producto */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-700 mb-4">📊 Stock por Producto</h2>
-        <div className="bg-white rounded-2xl shadow p-6">
-          <StockPorProducto />
+          {/* Ocupación por Pasillo */}
+          <div className="w-full md:w-1/2 max-w-xl bg-white rounded-2xl shadow p-6 flex flex-col min-h-[460px]">
+            <h2 className="text-xl font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
+              🚧 <span>Ocupación por Pasillo</span>
+            </h2>
+            <div className="flex-grow flex justify-center items-center">
+              <OcupacionPorPasilloChart />
+            </div>
+          </div>
         </div>
       </section>
 
