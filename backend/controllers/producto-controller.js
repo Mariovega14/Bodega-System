@@ -29,3 +29,29 @@ export const listarProductos = async (req, res) => {
     res.status(500).json({ error: "Error al obtener los productos" });
   }
 };
+
+export const eliminarProducto = async (req, res) => {
+  const { sku } = req.params;
+
+  if (!sku) {
+    return res.status(400).json({ mensaje: "Falta el SKU del producto" });
+  }
+
+  try {
+    const producto = await Producto.findOne({ sku });
+
+    if (!producto) {
+      return res.status(404).json({ mensaje: "Producto no encontrado" });
+    }
+
+    // Marcar como inactivo
+    producto.activo = false;
+    await producto.save();
+
+    res.status(200).json({ mensaje: `Producto con SKU ${sku} fue desactivado correctamente` });
+  } catch (error) {
+    console.error("Error al desactivar producto:", error);
+    res.status(500).json({ error: "Error al desactivar el producto" });
+  }
+};
+

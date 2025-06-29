@@ -2,6 +2,7 @@ import express from "express";
 import {
   cargarProductos,
   listarProductos,
+  eliminarProducto
 } from "../controllers/producto-controller.js";
 
 const router = express.Router();
@@ -9,6 +10,8 @@ const router = express.Router();
 router.post("/pasillo1", cargarProductos);
 
 router.get("/", listarProductos);
+
+router.delete("/:sku", eliminarProducto);
 
 export default router;
 
