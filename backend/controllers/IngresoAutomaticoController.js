@@ -15,7 +15,7 @@ export const ingresoAutomatico = async (req, res) => {
     if (ubicacionSugerida) {
       ubicacionSugerida.estado = "lleno";
       ubicacionSugerida.sku = sku;
-      ubicacionSugerida.cantidad = 1;
+      ubicacionSugerida.cantidad = 1;  
       await ubicacionSugerida.save();
       return res.json({ mensaje: "Ingreso en posición sugerida", coordenada: sugerida });
     }
