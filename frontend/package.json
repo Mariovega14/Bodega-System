@@ -9,7 +9,7 @@
   "dependencies": {
     "apexcharts": "^4.7.0",
     "axios": "^1.9.0",
-    "docx": "^8.4.0",
+    "docx": "^8.5.0",
     "file-saver": "^2.0.5",
     "react": "^18.2.0",
     "react-apexcharts": "^1.7.0",
