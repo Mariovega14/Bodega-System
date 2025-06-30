@@ -43,6 +43,14 @@ function HomePage() {
           <ProductosPorVencer />
         </div>
       </section>
+
+      {/* Stock por producto */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-700 mb-4">📊 Stock por Producto</h2>
+        <div className="bg-white rounded-2xl shadow p-6">
+          <StockPorProducto />
+        </div>
+      </section>
     </div>
   );
 }
