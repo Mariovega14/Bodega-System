@@ -60,6 +60,8 @@ router.post("/salida-multiple", async (req, res) => {
         continue;
       }
 
+      const skuAnterior = ubi.sku;
+
       ubi.sku = null;
       ubi.estado = "0";
       ubi.fechaVencimiento = null;
@@ -67,7 +69,7 @@ router.post("/salida-multiple", async (req, res) => {
       await ubi.save();
 
       await registrarMovimiento({
-        sku: ubi.sku,
+        sku: skuAnterior,
         coordenada: coord,
         tipo: "Salida"
       });
